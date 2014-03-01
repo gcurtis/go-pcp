@@ -51,7 +51,7 @@ This example illustrates how go-pcp can be used with Jenkins to run Go jobs in i
 
 ```bash
 go-pcp GoWorkspace github.com/gcurtis/go-pcp:.
-GOPATH=GoWorkspace
+GOPATH="$WORKSPACE/GoWorkspace"
 go test github.com/gcurtis/go-pcp
 go install github.com/gcurtis/go-pcp
 ```
