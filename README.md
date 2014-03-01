@@ -11,6 +11,7 @@ Usage
 ```bash
 $ go-pcp -help
 Usage: go-pcp [options] workspacePath importPath[:directory]...
+  -abs=false: print the absolute path to the workspace.
   -hidden=false: include hidden files.
   -recursive=true: recursively copy subpackage dependencies.
   -verbose=false: verbose output.
