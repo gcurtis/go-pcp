@@ -12,11 +12,12 @@ import (
 )
 
 var (
-	resolved  = make(map[string]bool) // Packages that have been resolved.
 	hidden    bool                    // Copy hidden files.
 	recursive bool                    // Recursively copy dependencies.
+	abs       bool                    // Print the absolute workspace path.
 	verbose   bool                    // Verbose output.
 	workspace string                  // Destination workspace.
+	resolved  = make(map[string]bool) // Packages that have been resolved.
 	gopath    string                  // Destination GOPATH.
 	exitCode  int                     // Program exit code.
 )
@@ -51,6 +52,8 @@ non-fatal error.`)
 	flag.BoolVar(&recursive, "recursive", true, "recursively copy subpackage "+
 		"dependencies.")
 	flag.BoolVar(&hidden, "hidden", false, "include hidden files.")
+	flag.BoolVar(&abs, "abs", false, "print the absolute path to the "+
+		"workspace.")
 	flag.BoolVar(&verbose, "verbose", false, "verbose output.")
 	flag.Parse()
 
@@ -64,6 +67,9 @@ non-fatal error.`)
 	workspace, err = createWorkspace(flag.Arg(0))
 	checkError(true, err)
 	gopath = fmt.Sprintf("GOPATH=%s", workspace)
+	if abs {
+		fmt.Println(workspace)
+	}
 
 	for _, a := range flag.Args()[1:] {
 		importPath, dir, err := parseImport(a)
