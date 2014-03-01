@@ -23,16 +23,16 @@ var (
 
 func main() {
 	flag.Usage = func() {
-		fmt.Fprintln(os.Stderr, "Usage: giso [options] workspacePath "+
+		fmt.Fprintln(os.Stderr, "Usage: go-pcp [options] workspacePath "+
 			"importPath[:directory]...")
 		flag.PrintDefaults()
 		fmt.Fprintln(os.Stderr, "  -help: show this message.")
 		fmt.Fprintln(os.Stderr, `
-giso copies a Go package and its dependencies into a new Go workspace (GOPATH).
-giso will resolve packages by first looking in a provided directory, then by
-looking for them in your existing workspace, and then by downloading them with
-"go get". If giso encounters an error when resolving a package, it will skip it
-and continue with the next one.
+go-pcp copies a Go package and its dependencies into a new Go workspace
+(GOPATH). go-pcp will resolve packages by first looking in a provided directory,
+then by looking for them in your existing workspace, and then by downloading
+them with "go get". If go-pcp encounters an error when resolving a package, it
+will skip it and continue with the next one.
 
 Packages are specified by their import path, followed by an optional colon and
 directory that contains the sources for the package. Specifying a directory lets
@@ -40,10 +40,10 @@ you use sources not in your existing Go workspace, making it useful for building
 specific versions of a package (e.g., when you have a checked-out commit on a
 build server). For example:
 
-	giso my-workspace github.com/gcurtis/giso:$HOME/giso
+	go-pcp my-workspace github.com/gcurtis/go-pcp:$HOME/go-pcp
 
-will use the contents of "$HOME/giso" for the package "github.com/gcurtis/giso"
-in my-workspace.
+will use the contents of "$HOME/go-pcp" for the package "github.com/gcurtis/go-
+pcp" in my-workspace.
 
 Exit code 0 is a success, 1 is an error, 2 is a syntax error, and 3 is a
 non-fatal error.`)

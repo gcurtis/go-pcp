@@ -25,7 +25,7 @@ func init() {
 
 func mkTempDir(t *testing.T) {
 	var err error
-	tempDir, err = ioutil.TempDir("", "giso.main")
+	tempDir, err = ioutil.TempDir("", "go-pcp.main")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -151,7 +151,7 @@ func TestThatFindPkgReturnsPackageWithCorrectImportPath(t *testing.T) {
 }
 
 func TestThatFindPkgReturnsPkgWhenGivenRemoteImportPath(t *testing.T) {
-	_, err := findPkg("github.com/gcurtis/giso", "")
+	_, err := findPkg("github.com/gcurtis/go-pcp", "")
 
 	if err != nil {
 		t.Error("findPkg returned an error:", err)
