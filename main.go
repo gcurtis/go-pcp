@@ -158,9 +158,9 @@ func checkError(fatal bool, errs ...error) bool {
 	return false
 }
 
-// createWorkspace makes a new directory at the given path. A syntax error is
-// returned if path is empty and any other error is returned if the directory
-// cannot be created.
+// createWorkspace makes a new directory at the given path and returns an
+// absolute path pointing to it. A syntax error is returned if path is empty and
+// any other error is returned if the directory cannot be created.
 func createWorkspace(path string) (absPath string, err error) {
 	if path == "" {
 		err = syntaxErr{
@@ -256,6 +256,10 @@ func findSubPkgs(basePath, baseImportPath string) (ret []copyPkgArgs) {
 			return nil
 		}
 		if info.IsDir() {
+			if path == workspace {
+				return filepath.SkipDir
+			}
+
 			rel, err := filepath.Rel(basePath, path)
 			if err != nil {
 				return nil
@@ -378,6 +382,10 @@ func copyDir(src, dst string) (errs []error) {
 				return filepath.SkipDir
 			}
 			return nil
+		}
+
+		if path == workspace {
+			return filepath.SkipDir
 		}
 
 		rel, err := filepath.Rel(src, path)
