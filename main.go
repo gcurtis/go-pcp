@@ -28,11 +28,11 @@ func main() {
 		flag.PrintDefaults()
 		fmt.Fprintln(os.Stderr, "  -help: show this message.")
 		fmt.Fprintln(os.Stderr, `
-giso isolates a Go package by copying it and its dependencies into a new Go
-workspace (GOPATH). giso will resolve packages by first using a provided
-directory, then by looking for them in your existing workspace, and then by
-downloading them with "go get". If giso encounters an error when resolving a
-package, it will skip it and continue with the next one.
+giso copies a Go package and its dependencies into a new Go workspace (GOPATH).
+giso will resolve packages by first looking in a provided directory, then by
+looking for them in your existing workspace, and then by downloading them with
+"go get". If giso encounters an error when resolving a package, it will skip it
+and continue with the next one.
 
 Packages are specified by their import path, followed by an optional colon and
 directory that contains the sources for the package. Specifying a directory lets
@@ -46,7 +46,7 @@ will use the contents of "$HOME/giso" for the package "github.com/gcurtis/giso"
 in my-workspace.
 
 Exit code 0 is a success, 1 is an error, 2 is a syntax error, and 3 is a
-warning.`)
+non-fatal error.`)
 	}
 	flag.BoolVar(&recursive, "recursive", true, "recursively copy subpackage "+
 		"dependencies.")
@@ -199,10 +199,9 @@ func createWorkspace(path string) (absPath string, err error) {
 // "path/to/pkg" or it can be a directory path. Directory paths must start with
 // a "." or a "/" to distinguish them from regular import paths.
 func findPkg(path, newImportPath string) (pkg *build.Package, err error) {
-	// Determine is path is a directory path. If it is, then we must set srcDir
-	// to the absolute version of path and then set path to ".". This tells Go
-	// to find the package in the directory srcDir. Otherwise, we just give Go
-	// the remote path and ignore any relative imports.
+	// Determine if path is a directory path. If it is, then we tell Go to look
+	// for the import path "." in path. Otherwise, we only give Go the path,
+	// causing it look in the normal GOPATH.
 	srcDir := ""
 	if build.IsLocalImport(path) || path[0] == '/' {
 		if !filepath.IsAbs(path) {
@@ -256,6 +255,9 @@ func findSubPkgs(basePath, baseImportPath string) (ret []copyPkgArgs) {
 			return nil
 		}
 		if info.IsDir() {
+			// Skip over the workspace path to prevent infinite recursion. This
+			// could be cleaner by initially putting the workspace in a temp
+			// directory and then moving it when done.
 			if path == workspace {
 				return filepath.SkipDir
 			}
@@ -384,6 +386,9 @@ func copyDir(src, dst string) (errs []error) {
 			return nil
 		}
 
+		// Skip over the workspace path to prevent infinite recursion. This
+		// could be cleaner by initially putting the workspace in a temp
+		// directory and then moving it when done.
 		if path == workspace {
 			return filepath.SkipDir
 		}
